@@ -107,7 +107,7 @@ Meteor.methods({
 
 		// Query for senders
 		from = [];
-		text = text.replace(/from:([a-z0-9.-_]+)/ig, function(match, username) {
+		text = text.replace(/from:([a-z0-9\.-_]+)/ig, function(match, username) {
 			if (username === 'me' && !from.includes(currentUserName)) {
 				username = currentUserName;
 			}
