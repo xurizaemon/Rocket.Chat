@@ -120,7 +120,7 @@ Meteor.methods({
 				$options: 'i'
 			};
 		}
-		// Query for senders
+		// Query for mentions
 		mention = [];
 		text = text.replace(/mention:([a-z0-9.-_]+)/ig, function(match, username) {
 			mention.push(username);
