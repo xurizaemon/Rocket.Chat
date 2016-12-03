@@ -91,11 +91,14 @@ Meteor.methods({
 
 		// db.getCollection('rocketchat_message').find({'$or': [{'$text': {'$search': ':grinning:'}}, {'reactions.:grinning:': {'$exists': true}}]})
 		function filterReaction(_, reactioncode) {
-			// IDEA: Here we run a second find(), grab the IDs (or whatever Mongo
-			// calls them, then later if there is a set of messages to include
-			// we can OR using $text or ID lookup. This should mean both filters
-			// in the OR are indexed.
+			// Here we run a second find(), grab the IDs, then later if there is a
+			//  set of messages to include we can OR using $text or ID lookup.
 			//
+			// This should mean both filters in the OR are indexed, but it means we
+			// end up pushing the reaction match IDs back and forth - not good if
+			// lots of them.
+			//
+			// Maybe it's better to make emoji reactions indexed then?
 			console.log(reactioncode, ':emoji:');
 		}
 
