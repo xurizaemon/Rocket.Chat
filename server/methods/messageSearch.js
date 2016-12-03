@@ -91,8 +91,12 @@ Meteor.methods({
 
 		// db.getCollection('rocketchat_message').find({'$or': [{'$text': {'$search': ':grinning:'}}, {'reactions.:grinning:': {'$exists': true}}]})
 		function filterReaction(_, reactioncode) {
-			console.log(reactioncode);
+			// IDEA: Here we run a second find(), grab the IDs (or whatever Mongo
+			// calls them, then later if there is a set of messages to include
+			// we can OR using $text or ID lookup. This should mean both filters
+			// in the OR are indexed.
 			//
+			console.log(reactioncode, ':emoji:');
 		}
 
 		/*
@@ -146,7 +150,8 @@ Meteor.methods({
 		text = text.replace(/is:pinned|has:pin/g, filterPinned);
 		// Filter on messages which have a location attached.
 		text = text.replace(/has:location|has:map/g, filterLocation);
-		text = text.replace(/:([a-z0-9.-_]+):/g, filterReaction);
+		// Filter in messages which have emoji reactions.
+		text = text.replace(/:([a-z0-9_]+):/g, filterReaction);
 
 		// Filtering before/after/on a date
 		// matches dd-MM-yyyy, dd/MM/yyyy, dd-MM-yyyy, prefixed by before:, after: and on: respectively.
