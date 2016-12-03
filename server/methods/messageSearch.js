@@ -89,6 +89,12 @@ Meteor.methods({
 			return '';
 		}
 
+		// db.getCollection('rocketchat_message').find({'$or': [{'$text': {'$search': ':grinning:'}}, {'reactions.:grinning:': {'$exists': true}}]})
+		function filterReaction(_, reactioncode) {
+			console.log(reactioncode);
+			//
+		}
+
 		/*
 		 text = 'from:rodrigo mention:gabriel chat'
 		 */
@@ -122,7 +128,7 @@ Meteor.methods({
 		}
 		// Query for senders
 		mention = [];
-		text = text.replace(/mention:([a-z0-9.-_]+)/ig, function(match, username) {
+		text = text.replace(/mention:([a-z0-9-_]+)/ig, function(match, username) {
 			mention.push(username);
 			return '';
 		});
@@ -140,6 +146,8 @@ Meteor.methods({
 		text = text.replace(/is:pinned|has:pin/g, filterPinned);
 		// Filter on messages which have a location attached.
 		text = text.replace(/has:location|has:map/g, filterLocation);
+		text = text.replace(/:([a-z0-9.-_]+):/g, filterReaction);
+
 		// Filtering before/after/on a date
 		// matches dd-MM-yyyy, dd/MM/yyyy, dd-MM-yyyy, prefixed by before:, after: and on: respectively.
 		// Example: before:15/09/2016 after: 10-08-2016
@@ -175,6 +183,8 @@ Meteor.methods({
 				};
 			}
 		}
+		console.log(query, 'query');
+
 		if (Object.keys(query).length > 0) {
 			query.t = {
 				$ne: 'rm'  //hide removed messages (useful when searching for user messages)
