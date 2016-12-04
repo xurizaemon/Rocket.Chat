@@ -1,6 +1,6 @@
 Meteor.methods({
 	messageSearch: function(text, rid, limit) {
-		var from, mention, options, query, r, result, currentUserName, currentUserId, currentUserTimezoneOffset;
+		var from, mention, options, query, r, result, currentUserName, currentUserId, currentUserTimezoneOffset, orMsgs;
 		check(text, String);
 		check(rid, String);
 		check(limit, Match.Optional(Number));
@@ -99,7 +99,23 @@ Meteor.methods({
 			// lots of them.
 			//
 			// Maybe it's better to make emoji reactions indexed then?
-			console.log(reactioncode, ':emoji:');
+			if (typeof orMsgs === 'undefined') {
+				orMsgs = [];
+			}
+			var rquery, rresult, roptions, fieldname;
+			fieldname = 'reactions.:' + reactioncode + ':';
+			rquery = {};
+			rquery[fieldname] = {'$exists': true};
+			roptions = {
+				sort: {
+					ts: -1
+				},
+				limit: limit || 20
+			};
+			var rresult = RocketChat.models.Messages.find(rquery, roptions).fetch();
+			rresult.forEach(function(message) {
+				orMsgs.push(message._id);
+			});
 		}
 
 		/*
@@ -191,7 +207,11 @@ Meteor.methods({
 				};
 			}
 		}
-		console.log(query, 'query');
+
+		// OR in the reaction messages, if they exist.
+		if (typeof orMsgs !== 'undefined') {
+			query = { $or: [query, { _id: { $in: orMsgs }}]};
+		}
 
 		if (Object.keys(query).length > 0) {
 			query.t = {
