@@ -116,7 +116,7 @@ Meteor.methods({
 			rresult.forEach(function(message) {
 				orMsgs.push(message._id);
 			});
-			// Keep the search term in the search query by returning it to replace().
+			// Keep search term in query by returning to replace().
 			return ':' + reactioncode + ':';
 		}
 
