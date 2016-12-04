@@ -116,6 +116,8 @@ Meteor.methods({
 			rresult.forEach(function(message) {
 				orMsgs.push(message._id);
 			});
+			// Keep the search term in the search query by returning it to replace().
+			return ':' + reactioncode + ':';
 		}
 
 		/*
@@ -208,8 +210,9 @@ Meteor.methods({
 			}
 		}
 
-		// OR in the reaction messages, if they exist.
+		// OR in the reaction message IDs, if they exist.
 		if (typeof orMsgs !== 'undefined') {
+			// db.getCollection('rocketchat_message').find({ $or: [ {$text: { $search: ':evergreen_tree:' }}, { _id: { $in: ['ZnYetwhnhLZw7ff8X'] } }] })
 			query = { $or: [query, { _id: { $in: orMsgs }}]};
 		}
 
